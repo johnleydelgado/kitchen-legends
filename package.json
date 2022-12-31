@@ -1,0 +1,65 @@
+{
+  "name": "KitchenLegends",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@expo-google-fonts/manrope": "^0.2.2",
+    "@react-native-async-storage/async-storage": "^1.17.11",
+    "@react-native-community/netinfo": "^8.3.0",
+    "@react-navigation/bottom-tabs": "^6.5.0",
+    "@react-navigation/native": "^6.1.0",
+    "@react-navigation/native-stack": "^6.9.5",
+    "@react-navigation/stack": "^6.3.8",
+    "@realm/react": "^0.4.1",
+    "@reduxjs/toolkit": "^1.9.1",
+    "deprecated-react-native-prop-types": "^2.3.0",
+    "formik": "^2.2.9",
+    "lodash": "^4.17.21",
+    "lottie-react-native": ">=3.0.0",
+    "native-base": "^3.4.25",
+    "prop-types": "^15.8.1",
+    "randomcolor": "^0.6.2",
+    "react": "18.1.0",
+    "react-native": "0.70.6",
+    "react-native-animated-loader": "^1.0.0",
+    "react-native-gesture-handler": "^2.8.0",
+    "react-native-get-random-values": "^1.8.0",
+    "react-native-modalfy": "^3.3.2",
+    "react-native-paper": "^5.0.1",
+    "react-native-reanimated": "^2.13.0",
+    "react-native-safe-area-context": "^4.4.1",
+    "react-native-screens": "^3.18.2",
+    "react-native-svg": "^13.6.0",
+    "react-native-toast-message": "^2.1.5",
+    "react-native-vector-icons": "^9.2.0",
+    "react-redux": "^8.0.5",
+    "realm": "^11.3.1",
+    "redux": "^4.2.0",
+    "redux-persist": "^6.0.0",
+    "yup": "^0.32.11"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.9",
+    "@babel/runtime": "^7.12.5",
+    "babel-jest": "^26.6.3",
+    "eslint": "^8.19.0",
+    "eslint-config-universe": "^11.1.1",
+    "jest": "^26.6.3",
+    "metro-react-native-babel-preset": "0.72.3",
+    "prettier": "^2.8.0",
+    "react-test-renderer": "18.1.0"
+  },
+  "eslintConfig": {
+    "extends": "universe"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
