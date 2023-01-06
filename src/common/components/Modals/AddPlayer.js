@@ -27,7 +27,7 @@ const AddPlayer = () => {
   const { profileInfo } = useSelector((state) => state.user);
   const [searchPlayers, setSearchPlayers] = useState([]);
 
-  const user = localRealm.objects(User.schema.name);
+  const user = localRealm.objects(User.name);
   const getAllPlayers = user.filtered(`email >= '${profileInfo.email}'`)[0];
 
   const formik = useFormik({

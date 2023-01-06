@@ -9,9 +9,6 @@ import { useDispatch } from 'react-redux';
 
 import Forms from '../../common/components/Form/Forms';
 import colors from '../../common/constant/colors';
-import { useRealm } from '../../realm';
-import { Player } from '../../realm/models/Player';
-import { User } from '../../realm/models/User';
 import { setUsers } from '../../redux/user';
 import SignUpForm from './forms/SignUpForm';
 
@@ -19,27 +16,24 @@ import SignUpForm from './forms/SignUpForm';
 const SignUp = () => {
   // hooks
   const app = useApp();
-  const realm = useRealm();
   const dispatch = useDispatch();
 
   const createUser = async (data) => {
     const { email, password } = data;
 
-    realm.write(async () => {
-      try {
-        await app.emailPasswordAuth.registerUser({ email, password });
-        const credentials = Realm.Credentials.emailPassword(email, password);
-        dispatch(setUsers(data));
-        await app.logIn(credentials);
-      } catch (e) {
-        Toast.show({
-          type: 'error',
-          text1: e.message,
-          position: 'bottom',
-          visibilityTime: 2000,
-        });
-      }
-    });
+    try {
+      await app.emailPasswordAuth.registerUser({ email, password });
+      const credentials = Realm.Credentials.emailPassword(email, password);
+      dispatch(setUsers(data));
+      await app.logIn(credentials);
+    } catch (e) {
+      Toast.show({
+        type: 'error',
+        text1: e.message,
+        position: 'bottom',
+        visibilityTime: 2000,
+      });
+    }
   };
 
   return (

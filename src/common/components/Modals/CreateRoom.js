@@ -1,15 +1,18 @@
 //import liraries
 import { Formik, useFormik, useFormikContext } from 'formik';
-import { Box, Divider, FlatList, ScrollView, Stack, Text, VStack } from 'native-base';
+import { find, includes, isEmpty } from 'lodash';
+import { Box, Divider, FlatList, ScrollView, Stack, Text, View, VStack } from 'native-base';
 import React, { Component, useEffect, useState } from 'react';
 import { ImageBackground, StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useModal } from 'react-native-modalfy';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import { useSelector } from 'react-redux';
 import * as Yup from 'yup';
 
 import { useRealm } from '../../../realm';
 import { Player } from '../../../realm/models/Player';
+import { Room } from '../../../realm/models/Room';
 import { User } from '../../../realm/models/User';
 import colors from '../../constant/colors';
 import images from '../../constant/images';
@@ -26,56 +29,81 @@ const CreateRoom = () => {
 
   const { profileInfo } = useSelector((state) => state.user);
   const [searchPlayers, setSearchPlayers] = useState([]);
-  const [selectedPlayer, setSelectedPlayer] = useState([{ name: '' }]);
+  const [searchingPlayer, setSearchingPlayer] = useState('');
 
-  const user = localRealm.objects(User.schema.name);
+  const user = localRealm.objects(User.name);
   const getAllPlayers = user.filtered(`email >= '${profileInfo.email}'`)[0];
 
-  const addPlayerHandler = () => {
+  const formik = useFormik({
+    initialValues: { roomName: '', players: [] },
+    validationSchema: Yup.object().shape({
+      roomName: Yup.string().required(REQUIRED_FIELD('room name')),
+      players: Yup.array().min(1).required(REQUIRED_FIELD('players')),
+    }),
+    validateOnChange: false,
+    validateOnBlur: false,
+    onSubmit: (values) => addRoomHandler(values),
+  });
+
+  const addRoomHandler = (values) => {
+    const { roomName, players } = values;
+
     localRealm.write(async () => {
-      const checkPlayerIsExist = getAllPlayers.players.findIndex(
-        (a) => a.name === formik.values.name
-      );
-      if (checkPlayerIsExist === -1) {
-        const createdPlayer = localRealm.create(
-          Player.schema.name,
-          new Player({ name: formik.values.name })
+      try {
+        const createdRoom = localRealm.create(
+          Room.schema.name,
+          new Room({ name: roomName, players })
         );
-        getAllPlayers.players.push(createdPlayer);
+        getAllPlayers.rooms.push(createdRoom);
+        closeModal(MODALS.MODAL_CREATE_ROOM);
+      } catch (e) {
+        Toast.show({
+          type: 'error',
+          text1: e.message,
+          position: 'bottom',
+          visibilityTime: 2000,
+        });
       }
     });
   };
 
-  const formik = useFormik({
-    initialValues: { name: '', room: '' },
-    validationSchema: Yup.object().shape({
-      name: Yup.string().required(REQUIRED_FIELD('player name')),
-      room: Yup.string().required(REQUIRED_FIELD('room name')),
-    }),
-    validateOnChange: false,
-    validateOnBlur: false,
-    onSubmit: (values) => addPlayerHandler(values),
-  });
-
-  const selectedPlayerHandler = (name) => setSelectedPlayer((prev) => [...prev, { name }]);
+  const selectedPlayerHandler = (values) => {
+    const currentArr = formik.values.players;
+    const { _id } = values;
+    if (isEmpty(find(currentArr, { _id }))) {
+      formik.setFieldValue('players', [...currentArr, values]);
+    } else {
+      formik.setFieldValue(
+        'players',
+        currentArr.filter((a) => a._id !== _id)
+      );
+    }
+  };
 
   useEffect(() => {
     let subscribed = false;
     if (!subscribed) {
+      const currentArr = formik.values.players;
       let players = getAllPlayers.players.filter(
-        (a) => a.name.toLowerCase().indexOf(formik.values.name.toLocaleLowerCase()) === 0
+        (a) => a.name.toLowerCase().indexOf(searchingPlayer.toLocaleLowerCase()) === 0
       );
 
-      if (!formik.values.name) {
+      players.map((item, index) => {
+        if (isEmpty(find(currentArr, { _id: item._id }))) {
+          players[index].isSelected = false;
+        } else {
+          players[index].isSelected = true;
+        }
+      });
+      if (!searchingPlayer) {
         players = [];
       }
-
       setSearchPlayers(players);
     }
     return () => {
       subscribed = true;
     };
-  }, [formik.values.name]);
+  }, [searchingPlayer, formik.values.players]);
 
   return (
     <Box w={width * 0.9} h={height / 2}>
@@ -95,30 +123,30 @@ const CreateRoom = () => {
             <CommonTextField
               color={colors.primary}
               placeholder="Enter room name"
-              onChange={formik.handleChange('room')}
-              error={formik.errors.name}
+              onChange={formik.handleChange('roomName')}
+              error={formik.errors.roomName}
             />
             <CommonTextField
               color={colors.primary}
               placeholder="Enter player name"
-              onChange={formik.handleChange('name')}
-              error={formik.errors.name}
+              onChange={(val) => setSearchingPlayer(val)}
+              error={formik.errors.players}
             />
             <FlatList
               data={searchPlayers}
               showsVerticalScrollIndicator={false}
-              style={{ flexGrow: 1, height: '30%' }}
+              style={{ flexGrow: 1, height: searchPlayers.length ? '30%' : '0%' }}
               renderItem={({ item }) => (
                 <>
                   <TouchableOpacity
                     style={{
-                      backgroundColor: colors.orange,
+                      backgroundColor: item?.isSelected ? colors.gray : colors.orange,
                       borderRadius: 4,
                       paddingLeft: 32,
                       height: 32,
                       justifyContent: 'center',
                     }}
-                    onPress={() => selectedPlayerHandler(item.name)}>
+                    onPress={() => selectedPlayerHandler(item)}>
                     <Text color="white">{item.name}</Text>
                   </TouchableOpacity>
                   <Divider margin={2} />
@@ -126,11 +154,20 @@ const CreateRoom = () => {
               )}
               keyExtractor={(item) => item._id}
             />
+
+            {formik.values.players.length !== 0 ? (
+              <>
+                <Text fontWeight="700" fontSize="lg" color={colors.text}>
+                  Selected Player
+                </Text>
+                <Text>{formik.values.players.map((a) => a.name).join(',')}</Text>
+              </>
+            ) : null}
           </VStack>
 
           <Box position="absolute" bottom="-22" width="100%" alignSelf="center" alignItems="center">
             <Stack w="80%" h="100%" space={2}>
-              <CommonButton src={images.buttonOne} title="Add" onPress={formik.handleSubmit} />
+              <CommonButton src={images.buttonOne} title="Play" onPress={formik.handleSubmit} />
             </Stack>
           </Box>
         </>

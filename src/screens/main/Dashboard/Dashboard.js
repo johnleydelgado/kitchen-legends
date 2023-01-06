@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import Loading from '../../../common/components/Loading/Loading';
 import colors from '../../../common/constant/colors';
 import { useSync } from '../../../context/SyncContext';
-import { useRealm } from '../../../realm';
 import Classic from './components/Classic';
 import Default from './components/Default';
 import Rank from './components/Rank';

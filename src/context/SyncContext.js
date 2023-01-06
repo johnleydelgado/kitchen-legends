@@ -3,14 +3,12 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import 'react-native-get-random-values';
 import Realm from 'realm';
-import NetInfo, { useNetInfo } from '@react-native-community/netinfo';
 
-import useConnectivity, { isConnected } from '../common/hooks/isConnected';
-import { useRealmSync } from '../common/hooks/useRealmSync';
-import { realmSync, useRealm } from '../realm';
+import { useRealm } from '../realm';
 import { Answer } from '../realm/models/Answer';
 import { Player } from '../realm/models/Player';
 import { Question } from '../realm/models/Question';
+import { Room } from '../realm/models/Room';
 import { User } from '../realm/models/User';
 import { setProfile } from '../redux/user';
 
@@ -24,8 +22,6 @@ const SyncProvider = (props) => {
   const app = useApp();
   const localRealm = useRealm();
   // const { isConnected, isInternetReachable } = useNetInfo();
-
-  // const realm = useRealmSync();
 
   const dispatch = useDispatch();
 
@@ -68,39 +64,43 @@ const SyncProvider = (props) => {
     const { email, firstName, lastName, userId } = data;
     const newData = '';
 
-    const syncRealm = await realmSync(app);
-
-    const subscriptions = syncRealm.subscriptions;
-
+    const subscriptions = localRealm.subscriptions;
+    console.log('syncRealm', subscriptions);
     if (isEmpty(subscriptions)) {
-      await syncRealm.subscriptions.update((mutableSubs) => {
-        mutableSubs.add(syncRealm.objects(User.schema.name), {
+      await localRealm.subscriptions.update((mutableSubs) => {
+        mutableSubs.add(localRealm.objects(User.schema.name), {
           name: 'UserSub',
         });
       });
 
-      await syncRealm.subscriptions.update((mutableSubs) => {
-        mutableSubs.add(syncRealm.objects(Player.schema.name), {
+      await localRealm.subscriptions.update((mutableSubs) => {
+        mutableSubs.add(localRealm.objects(Player.schema.name), {
           name: 'PlayerSub',
+        });
+      });
+
+      await localRealm.subscriptions.update((mutableSubs) => {
+        mutableSubs.add(localRealm.objects(Room.schema.name), {
+          name: 'RoomSub',
         });
       });
     }
 
-    syncRealm.write(async () => {
-      const users = syncRealm.objects(User.name);
+    localRealm.write(async () => {
+      const users = localRealm.objects(User.name);
       const getUser = users.filtered(`email >= '${email}'`);
+      console.log('getUser', getUser);
       if (getUser.length === 0) {
-        syncRealm.create('User', new User({ email, firstName, lastName, userId, players: [] }));
+        localRealm.create('User', new User({ email, firstName, lastName, userId, players: [] }));
         // newData = { email, firstName, lastName, userId, players: [] };
         dispatch(setProfile({ email, firstName, lastName }));
       } else {
-        const createdPlayer = syncRealm.create(Player.schema.name, new Player({ name: 'test' }));
-        const players = syncRealm.objects(Player.name);
-        console.log('players', players);
-
-        // const { email, firstName, lastName, players } = getUser[0];
-        // // newData = { email, firstName, lastName, userId, players };
-        // dispatch(setProfile({ email, firstName, lastName }));
+        // const createdPlayer = realm.create(Player.schema.name, new Player({ name: 'test' }));
+        // const players = realm.objects(Player.name);
+        // console.log('players', players);
+        const { email, firstName, lastName, players } = getUser[0];
+        // newData = { email, firstName, lastName, userId, players };
+        dispatch(setProfile({ email, firstName, lastName }));
       }
     });
 
@@ -163,24 +163,23 @@ const SyncProvider = (props) => {
 
   const onPlayerChange = async (player, changes) => {
     if (changes.insertions.length !== 0) {
-      isConnected().then(async () => {
-        const syncRealm = await realmSync(app);
-        for (const localItem of player) {
-          const playerArr = syncRealm.objects(Player.name).filtered('_id == $0', localItem._id);
-          if (playerArr.length === 0) {
-            const user = syncRealm.objects(User.name);
-            const getAllPlayers = user.filtered(`email >= '${profileInfo.email}'`)[0];
-
-            syncRealm.write(async () => {
-              const createdPlayer = syncRealm.create(
-                Player.name,
-                new Player({ id: localItem._id, name: localItem.name })
-              );
-              getAllPlayers.players.push(createdPlayer);
-            });
-          }
-        }
-      });
+      // isConnected().then(async () => {
+      //   const syncRealm = await realmSync(app);
+      //   for (const localItem of player) {
+      //     const playerArr = syncRealm.objects(Player.name).filtered('_id == $0', localItem._id);
+      //     if (playerArr.length === 0) {
+      //       const user = syncRealm.objects(User.name);
+      //       const getAllPlayers = user.filtered(`email >= '${profileInfo.email}'`)[0];
+      //       syncRealm.write(async () => {
+      //         const createdPlayer = syncRealm.create(
+      //           Player.name,
+      //           new Player({ id: localItem._id, name: localItem.name })
+      //         );
+      //         getAllPlayers.players.push(createdPlayer);
+      //       });
+      //     }
+      //   }
+      // });
     }
 
     // if (changes.deletions) {

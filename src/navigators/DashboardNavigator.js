@@ -7,7 +7,7 @@ import Icons from 'react-native-vector-icons/Feather';
 
 import colors from '../common/constant/colors';
 import { MAIN, STACKS, TABS } from '../common/constant/screens';
-import { DashboardScreen, ProfileScreen } from '../screens';
+import { AboutScreen, DashboardScreen, LeaderBoardScreen, ProfileScreen } from '../screens';
 // import DashboardNavigator from "./DashboardNavigator";
 
 const Tab = createBottomTabNavigator();
@@ -107,10 +107,10 @@ const DashboardNavigator = () => {
       />
       <Tab.Screen
         name={TABS.LEADER_BOARD}
-        component={DashboardStack}
+        component={LeaderBoardStack}
         options={{ headerShown: false }}
       />
-      <Tab.Screen name={TABS.ABOUT} component={DashboardStack} options={{ headerShown: false }} />
+      <Tab.Screen name={TABS.ABOUT} component={AboutStack} options={{ headerShown: false }} />
       <Tab.Screen name={TABS.PROFILE} component={ProfileStack} options={{ headerShown: false }} />
 
       {/* <Tab.Screen
@@ -144,22 +144,40 @@ const DashboardStack = ({ navigation, route }) => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name={STACKS.DASHBOARD} component={DashboardScreen} />
+    </Stack.Navigator>
+  );
+};
 
-      {/* <Stack.Screen
-        name={STACKS.MEETING}
-        component={MeetingScreen}
-        options={{
-          headerShown: true,
-          headerTransparent: true,
-          headerLeft: (props) => (
-            <IconButton
-              icon={<Feather name="arrow-left" size={16} color="black" />}
-              onPress={() => navigation.navigate(TABS.DASHBOARD, { screen: STACKS.MEETING })}
-            />
-          ),
-          headerTitle: 'Bio-data',
-        }}
-      /> */}
+const LeaderBoardStack = ({ navigation, route }) => {
+  React.useLayoutEffect(() => {
+    const tabHiddenRoutes = [STACKS.MEETING, 'Map'];
+    if (tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))) {
+      navigation.setOptions({ tabBarStyle: { display: 'none' } });
+    } else {
+      navigation.setOptions({ tabBarStyle: { display: 'flex' } });
+    }
+  }, [navigation, route]);
+
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name={STACKS.LEADER_BOARD} component={LeaderBoardScreen} />
+    </Stack.Navigator>
+  );
+};
+
+const AboutStack = ({ navigation, route }) => {
+  React.useLayoutEffect(() => {
+    const tabHiddenRoutes = [STACKS.MEETING, 'Map'];
+    if (tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))) {
+      navigation.setOptions({ tabBarStyle: { display: 'none' } });
+    } else {
+      navigation.setOptions({ tabBarStyle: { display: 'flex' } });
+    }
+  }, [navigation, route]);
+
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name={STACKS.ABOUT} component={AboutScreen} />
     </Stack.Navigator>
   );
 };

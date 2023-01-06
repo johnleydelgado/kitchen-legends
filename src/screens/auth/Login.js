@@ -11,7 +11,6 @@ import Forms from '../../common/components/Form/Forms';
 import Loading from '../../common/components/Loading/Loading';
 import colors from '../../common/constant/colors';
 import { width, height } from '../../common/constant/size';
-import { useRealm } from '../../realm';
 import { setLoading, setUsers } from '../../redux/user';
 import LoginForm from './forms/LoginForm';
 
@@ -19,28 +18,24 @@ import LoginForm from './forms/LoginForm';
 const Login = () => {
   // hooks
   const app = useApp();
-  const realm = useRealm();
   const dispatch = useDispatch();
 
-  const loginHandler = (data) => {
+  const loginHandler = async (data) => {
     const { email, password } = data;
-
-    realm.write(async () => {
-      try {
-        const credentials = Realm.Credentials.emailPassword(email, password);
-        dispatch(setUsers(data));
-        dispatch(setLoading(false));
-        await app.logIn(credentials);
-      } catch (e) {
-        Toast.show({
-          type: 'error',
-          text1: e.message,
-          position: 'bottom',
-          visibilityTime: 2000,
-        });
-        dispatch(setLoading(false));
-      }
-    });
+    try {
+      const credentials = Realm.Credentials.emailPassword(email, password);
+      dispatch(setUsers(data));
+      dispatch(setLoading(false));
+      await app.logIn(credentials);
+    } catch (e) {
+      Toast.show({
+        type: 'error',
+        text1: e.message,
+        position: 'bottom',
+        visibilityTime: 2000,
+      });
+      dispatch(setLoading(false));
+    }
   };
 
   return (

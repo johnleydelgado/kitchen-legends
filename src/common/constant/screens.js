@@ -21,6 +21,8 @@ const TABS = {
 
 const STACKS = {
   DASHBOARD: 'DashboardTabScreen',
+  LEADER_BOARD: 'LeaderBoardScreen',
+  ABOUT: 'AboutScreen',
   PROFILE_SCREEN: 'ProfileTabScreen',
   EDIT_PROFILE: 'EDIT_PROFILE_STACK',
 };
