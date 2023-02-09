@@ -8,6 +8,7 @@ import { useRealm } from '../realm';
 import { Answer } from '../realm/models/Answer';
 import { Player } from '../realm/models/Player';
 import { Question } from '../realm/models/Question';
+import { Record } from '../realm/models/Record';
 import { Room } from '../realm/models/Room';
 import { User } from '../realm/models/User';
 import { setProfile } from '../redux/user';
@@ -67,23 +68,30 @@ const SyncProvider = (props) => {
     const subscriptions = localRealm.subscriptions;
     console.log('syncRealm', subscriptions);
     if (isEmpty(subscriptions)) {
-      await localRealm.subscriptions.update((mutableSubs) => {
-        mutableSubs.add(localRealm.objects(User.schema.name), {
-          name: 'UserSub',
+      try {
+        await localRealm.subscriptions.update((mutableSubs) => {
+          mutableSubs.add(localRealm.objects(User.schema.name), {
+            name: 'UserSub',
+          });
+          mutableSubs.add(localRealm.objects(Player.schema.name), {
+            name: 'PlayerSub',
+          });
+          mutableSubs.add(localRealm.objects(Room.schema.name), {
+            name: 'RoomSub',
+          });
+          mutableSubs.add(localRealm.objects(Question.schema.name), {
+            name: 'QuestionSub',
+          });
+          mutableSubs.add(localRealm.objects(Answer.schema.name), {
+            name: 'AnswerSub',
+          });
+          mutableSubs.add(localRealm.objects(Record.schema.name), {
+            name: 'RecordSub',
+          });
         });
-      });
-
-      await localRealm.subscriptions.update((mutableSubs) => {
-        mutableSubs.add(localRealm.objects(Player.schema.name), {
-          name: 'PlayerSub',
-        });
-      });
-
-      await localRealm.subscriptions.update((mutableSubs) => {
-        mutableSubs.add(localRealm.objects(Room.schema.name), {
-          name: 'RoomSub',
-        });
-      });
+      } catch (e) {
+        console.error('ERROR: ', e);
+      }
     }
 
     localRealm.write(async () => {

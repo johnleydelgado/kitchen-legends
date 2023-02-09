@@ -141,7 +141,7 @@ android {
         versionCode 1
         versionName "1.0"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
-
+        missingDimensionStrategy 'react-native-camera', 'general'
         if (isNewArchitectureEnabled()) {
             // We configure the CMake build only if you decide to opt-in for the New Architecture.
             externalNativeBuild {
@@ -216,6 +216,12 @@ android {
             storePassword 'android'
             keyAlias 'androiddebugkey'
             keyPassword 'android'
+        }
+        release {
+            storeFile file('kitchen_legends_key.keystore')
+            storePassword 'asd123'
+            keyAlias 'kitchen_legends_key'
+            keyPassword 'asd123'
         }
     }
     buildTypes {

@@ -12,18 +12,20 @@ import {
 } from 'redux-persist';
 
 import common from './common';
+import timer from './timer';
 import user from './user';
 
 const reducer = combineReducers({
   user,
+  timer,
   common,
 });
 
 const persistConfig = {
   key: 'root',
-  version: 1,
+  version: 2,
   storage: AsyncStorage,
-  whitelist: ['user'],
+  whitelist: ['user', 'timer'],
   // blacklist: ['employeeSlice']
 };
 

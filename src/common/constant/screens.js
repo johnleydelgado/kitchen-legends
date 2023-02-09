@@ -25,6 +25,7 @@ const STACKS = {
   ABOUT: 'AboutScreen',
   PROFILE_SCREEN: 'ProfileTabScreen',
   EDIT_PROFILE: 'EDIT_PROFILE_STACK',
+  RANKGAME: 'RankGameScreen',
 };
 
 export { ONBOARDING, AUTH, MAIN, TABS, STACKS };

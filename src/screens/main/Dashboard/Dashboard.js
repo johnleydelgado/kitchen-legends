@@ -1,9 +1,9 @@
 //import liraries
 import 'react-native-get-random-values';
-import { useApp, useUser } from '@realm/react';
+import { useUser } from '@realm/react';
 import { Box } from 'native-base';
 import React, { useCallback, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import Loading from '../../../common/components/Loading/Loading';
 import colors from '../../../common/constant/colors';
@@ -14,14 +14,17 @@ import Rank from './components/Rank';
 import useCategory from './hooks/useCategory';
 
 const Dashboard = () => {
-  // realm
-  const realmUser = useUser();
-
-  // context
-  const { syncNewUser, state, setLoadingSync } = useSync();
-
   // redux
   const { user } = useSelector((state) => state.user);
+
+  // realm
+  const realmUser = useUser();
+  // const localRealm = useRealm();
+  // const usersRealm = localRealm.objects(User.name);
+  // const { players } = usersRealm.filtered(`email >= '${profileInfo.email}'`)[0];
+  // console.log('players', players);
+  // context
+  const { syncNewUser, state, setLoadingSync } = useSync();
 
   //hooks
   const { category, setCategory, animatedStyleDefault, animatedStyleRank } = useCategory();

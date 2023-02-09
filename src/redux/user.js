@@ -4,9 +4,7 @@ const initialState = {
   user: {},
   profileInfo: {},
   error: '',
-  facilities: [],
-  patients: [],
-  currentFacility: {},
+  roomStatus: { ongoing: false, id: 0, name: '', totalNoOfQuestion: 0 },
   isLoggedIn: false,
   isLoading: false,
 };
@@ -21,6 +19,9 @@ export const user = createSlice({
     setProfile: (state, action) => {
       state.profileInfo = action.payload;
     },
+    setRoomStatus: (state, action) => {
+      state.roomStatus = action.payload;
+    },
     setLoading: (state, action) => {
       state.isLoading = action.payload;
     },
@@ -29,6 +30,6 @@ export const user = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setUsers, setProfile, resetState, setLoading } = user.actions;
+export const { setUsers, setProfile, setRoomStatus, resetState, setLoading } = user.actions;
 
 export default user.reducer;

@@ -6,7 +6,7 @@ import { createModalStack, ModalProvider } from 'react-native-modalfy';
 import { ActivityIndicator } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
 
-import { ModalAddPlayer, ModalCreateRoom } from './common/components/Modals/index';
+import { ModalAddPlayer, ModalCreateRoom, ModalGameScore } from './common/components/Modals/index';
 import { SyncProvider } from './context/SyncContext';
 import AuthNavigator from './navigators/AuthNavigator';
 import MainNavigator from './navigators/Main';
@@ -59,8 +59,8 @@ const PublicView = () => (
 
 const PrivateView = () => {
   const app = useApp();
-  const modalConfig = { ModalAddPlayer, ModalCreateRoom };
-  const defaultOptions = { backdropOpacity: 0.6 };
+  const modalConfig = { ModalAddPlayer, ModalCreateRoom, ModalGameScore };
+  const defaultOptions = { backdropOpacity: 0.6, backBehavior: 'none' };
   const realmFileBehavior = {
     type: 'downloadBeforeOpen',
     timeOut: 1000,
@@ -81,16 +81,25 @@ const PrivateView = () => {
       <RealmProvider
         sync={syncConfig}
         fallback={
-          <View style={{ flex: 1 }}>
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: 'white',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
             <ActivityIndicator />
           </View>
         }>
-        <ModalProvider stack={stack}>
-          <SyncProvider>
-            <MainNavigator />
-            <Toast />
-          </SyncProvider>
-        </ModalProvider>
+        <NavigationContainer>
+          <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
+          <ModalProvider stack={stack}>
+            <SyncProvider>
+              <MainNavigator />
+              <Toast />
+            </SyncProvider>
+          </ModalProvider>
+        </NavigationContainer>
       </RealmProvider>
     </NativeBaseProvider>
   );

@@ -2,10 +2,9 @@ import 'react-native-get-random-values';
 import { Realm } from '@realm/react';
 
 export class Question {
-  constructor({ id = new Realm.BSON.ObjectId(), questions, answerId, qrCode }) {
+  constructor({ id = new Realm.BSON.ObjectId(), questions, answerId }) {
     this.questions = questions;
     this._id = id;
-    this.qrCode = qrCode;
     this.answerId = answerId;
   }
 
@@ -15,8 +14,9 @@ export class Question {
     properties: {
       _id: 'objectId',
       questions: 'string',
-      qrCode: 'string',
       answerId: 'int',
+      points: 'int',
+      category: 'string',
     },
   };
 }

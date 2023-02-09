@@ -5,3 +5,4 @@ export { default as DashboardScreen } from './main/Dashboard/Dashboard';
 export { default as LeaderBoardScreen } from './main/LeaderBoard/LeaderBoard';
 export { default as AboutScreen } from './main/About/About';
 export { default as ProfileScreen } from './main/Profile/Profile';
+export { default as RankGameScreen } from './main/Dashboard/RankGame';

@@ -1,29 +1,34 @@
 //import liraries
+import { useNavigation } from '@react-navigation/native';
 import { Formik, useFormik, useFormikContext } from 'formik';
 import { find, includes, isEmpty } from 'lodash';
 import { Box, Divider, FlatList, ScrollView, Stack, Text, View, VStack } from 'native-base';
 import React, { Component, useEffect, useState } from 'react';
-import { ImageBackground, StyleSheet } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { ImageBackground, StyleSheet, TouchableOpacity } from 'react-native';
 import { useModal } from 'react-native-modalfy';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 
 import { useRealm } from '../../../realm';
 import { Player } from '../../../realm/models/Player';
 import { Room } from '../../../realm/models/Room';
 import { User } from '../../../realm/models/User';
+import { setRoomStatus } from '../../../redux/user';
 import colors from '../../constant/colors';
 import images from '../../constant/images';
 import { MODALS } from '../../constant/modals';
+import { STACKS } from '../../constant/screens';
 import { height, width } from '../../constant/size';
 import { REQUIRED_FIELD } from '../../constant/validationMessage';
 import CommonButton from '../Buttons/CommonButton';
 import CommonTextField from '../TextFields/CommonTextField';
-
 // create a component
 const CreateRoom = () => {
+  const navigation = useNavigation();
+
+  const dispatch = useDispatch();
+
   const { closeModal } = useModal();
   const localRealm = useRealm();
 
@@ -54,8 +59,11 @@ const CreateRoom = () => {
           Room.schema.name,
           new Room({ name: roomName, players })
         );
+        const { _id, name } = createdRoom;
+        dispatch(setRoomStatus({ ongoing: true, id: _id.toString(), name }));
         getAllPlayers.rooms.push(createdRoom);
         closeModal(MODALS.MODAL_CREATE_ROOM);
+        navigation.navigate(STACKS.RANKGAME);
       } catch (e) {
         Toast.show({
           type: 'error',

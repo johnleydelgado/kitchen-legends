@@ -4,7 +4,7 @@ import { useUser } from '@realm/react';
 import { Avatar, Box, Button, Center, HStack, Icon, ScrollView, Text, VStack } from 'native-base';
 import randomColor from 'randomcolor';
 import React from 'react';
-import { Platform, ImageBackground } from 'react-native';
+import { Platform, ImageBackground, Image } from 'react-native';
 import UserAvatar from 'react-native-user-avatar';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -46,7 +46,6 @@ const Dashboard = () => {
         <VStack space={5} px="4" pb="7">
           <HStack>
             <Center w="100%" mt="4">
-              {/* <Avatar borderColor={colors.primary} borderWidth={2} width="150" height="150" /> */}
               <UserAvatar
                 size={100}
                 name={`${profileInfo.firstName} ${profileInfo.lastName}`}

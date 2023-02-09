@@ -1,13 +1,20 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { getFocusedRouteNameFromRoute, useNavigation } from '@react-navigation/native';
+import { getFocusedRouteNameFromRoute, useNavigation, useRoute } from '@react-navigation/native';
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
 import { Center, Pressable, View } from 'native-base';
 import React from 'react';
 import Icons from 'react-native-vector-icons/Feather';
+import { useSelector } from 'react-redux';
 
 import colors from '../common/constant/colors';
 import { MAIN, STACKS, TABS } from '../common/constant/screens';
-import { AboutScreen, DashboardScreen, LeaderBoardScreen, ProfileScreen } from '../screens';
+import {
+  AboutScreen,
+  DashboardScreen,
+  LeaderBoardScreen,
+  ProfileScreen,
+  RankGameScreen,
+} from '../screens';
 // import DashboardNavigator from "./DashboardNavigator";
 
 const Tab = createBottomTabNavigator();
@@ -98,6 +105,17 @@ function TabBar({ state, descriptors, navigation }) {
 }
 
 const DashboardNavigator = () => {
+  const { roomStatus } = useSelector((state) => state.user);
+  const initialRoute = roomStatus.ongoing ? STACKS.RANKGAME : STACKS.DASHBOARD;
+  return (
+    <Stack.Navigator initialRouteName={initialRoute} screenOptions={{ headerShown: false }}>
+      <Stack.Screen name={STACKS.DASHBOARD} component={DashboardTab} />
+      <Stack.Screen name={STACKS.RANKGAME} component={RankGameScreen} />
+    </Stack.Navigator>
+  );
+};
+
+const DashboardTab = () => {
   return (
     <Tab.Navigator tabBar={(props) => <TabBar {...props} />}>
       <Tab.Screen
@@ -119,28 +137,10 @@ const DashboardNavigator = () => {
         options={({ route }) => ({ headerShown: false })}
       /> */}
     </Tab.Navigator>
-    // <Stack.Navigator
-    //   screenOptions={{
-    //     cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-    //     headerShown: false,
-    //   }}
-    //   // initialRouteName={isLoggedIn ? MAIN.DASHBOARD : MAIN.ONBOARDING}
-    // >
-    //   <Stack.Screen name={MAIN.DASHBOARD} component={DashboardScreen} />
-    // </Stack.Navigator>
   );
 };
 
 const DashboardStack = ({ navigation, route }) => {
-  React.useLayoutEffect(() => {
-    const tabHiddenRoutes = [STACKS.MEETING, 'Map'];
-    if (tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))) {
-      navigation.setOptions({ tabBarStyle: { display: 'none' } });
-    } else {
-      navigation.setOptions({ tabBarStyle: { display: 'flex' } });
-    }
-  }, [navigation, route]);
-
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name={STACKS.DASHBOARD} component={DashboardScreen} />

@@ -8,13 +8,22 @@ import { ActivityIndicator } from 'react-native-paper';
 import colors from '../../../common/constant/colors';
 
 // create a component
-const CommonButton = ({ src, title, onPress, isLoading = false }) => {
+const CommonButton = (props) => {
+  const {
+    src,
+    title,
+    onPress,
+    isLoading = false,
+    widthX = '100%',
+    fontColor = colors.subtleText,
+  } = props;
+
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={onPress}>
-        <ImageBackground source={src} style={{ width: '100%' }} resizeMode="stretch">
+        <ImageBackground source={src} style={{ width: widthX }} resizeMode="stretch">
           <HStack justifyContent="center">
-            <Text p={4} alignSelf="center" fontSize="lg" fontWeight="300" color={colors.subtleText}>
+            <Text p={4} alignSelf="center" fontSize="lg" fontWeight="300" color={fontColor}>
               {title}
             </Text>
             {isLoading ? <ActivityIndicator /> : null}
@@ -39,6 +48,8 @@ CommonButton.propTypes = {
   title: PropTypes.string.isRequired,
   onPress: PropTypes.func.isRequired,
   isLoading: PropTypes.bool,
+  width: PropTypes.any,
+  fontColor: PropTypes.any,
 };
 
 //make this component available to the app
