@@ -33,8 +33,8 @@ const Dashboard = () => {
 
   const ViewCategory = useCallback(() => {
     switch (category) {
-      case 'Classic':
-        return <Classic setCategory={setCategory} animatedStyles={animatedStyleRank} />;
+      // case 'Classic':
+      //   return <Classic setCategory={setCategory} animatedStyles={animatedStyleRank} />;
       case 'Rank':
         return <Rank setCategory={setCategory} animatedStyles={animatedStyleRank} />;
       default:

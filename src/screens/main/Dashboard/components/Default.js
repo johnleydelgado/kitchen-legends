@@ -18,7 +18,7 @@ const Default = ({ setCategory, animatedStyles }) => {
         space={6}
         mt={22}
         safeAreaTop={16}>
-        <CommonCard title="ℂ𝕝𝕒𝕤𝕤𝕚𝕔 📚" onPress={() => console.log('Classic')} />
+        {/* <CommonCard title="ℂ𝕝𝕒𝕤𝕤𝕚𝕔 📚" onPress={() => console.log('Classic')} /> */}
         <CommonCard title="ℝ𝕒𝕟𝕜 👑" onPress={() => setCategory('Rank')} />
       </Stack>
     </Animated.View>

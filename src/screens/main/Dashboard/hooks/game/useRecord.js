@@ -22,7 +22,7 @@ export default function useRecord(players) {
       localRealm.write(() => {
         const { records } = roomRealm[0];
         const index = findIndex(records, (a) => a.player._id.equals(selectedPlayer._id));
-        console.log('index', index);
+        // console.log('score', score);
         // console.log('taa', records[0].player._id, mongoose.Types.ObjectId(selectedPlayer._id));
         if (index === -1) {
           // create record
@@ -34,8 +34,9 @@ export default function useRecord(players) {
           records.push(record); // add record in Room
         } else {
           // update
-          const record = localRealm.objects(Record.name)[0];
-          record.score += score;
+          const record = records[index];
+          console.log('aaa', record.score + score);
+          roomRealm[0].records[index].score = record.score + score;
         }
       });
     } catch (e) {

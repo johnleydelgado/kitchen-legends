@@ -38,7 +38,7 @@ const RankGame = () => {
   const dispatch = useDispatch();
   const remainingTime = useSelector((state) => state.timer.remainingTime);
 
-  const { openModal } = useModal();
+  const { openModal, closeModal } = useModal();
 
   const { playerSettingsHandler, animatedStyleDefault } = useAnimation();
   const { players, roomStatus, selectPlayerHandler, resetSelectionOfPlayer } = usePlayer();
@@ -84,7 +84,6 @@ const RankGame = () => {
       navigation.addListener('beforeRemove', (e) => {
         // Prevent default behavior of leaving the screen
         e.preventDefault();
-
         Alert.alert(
           'Leave room ?',
           'You have unsaved changes. Are you sure to discard them and leave the room?',
@@ -94,6 +93,7 @@ const RankGame = () => {
               text: 'Leave',
               style: 'destructive',
               onPress: () => {
+                dispatch(setRemainingTime(DURATION));
                 dispatch(setRoomStatus({ ongoing: false, id: 0, name: '' }));
                 navigation.dispatch(e.data.action);
               },
@@ -200,6 +200,12 @@ const RankGame = () => {
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
     };
+  }, []);
+
+  useEffect(() => {
+    // openModal(MODALS.MODAL_GAME_SCORE);
+    // closeModal(MODALS.MODAL_GAME_SCORE);
+    // openModal(MODALS.MODAL_GAME_SCORE);
   }, []);
 
   return (
