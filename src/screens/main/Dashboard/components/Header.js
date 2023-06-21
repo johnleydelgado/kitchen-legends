@@ -1,5 +1,5 @@
 import { Box, HStack, Icon, Text } from 'native-base';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import colors from '../../../../common/constant/colors';
@@ -25,11 +25,20 @@ export const Header = ({ roomName, navigation }) => {
         <Text color="white" fontSize="20" fontWeight="bold" textAlign="center" pl="4">
           Room:{roomName}
         </Text>
-        <TouchableOpacity
-          style={{ alignItems: 'flex-end', flex: 1, paddingRight: 8 }}
-          onPress={exitRoom}>
-          <Icon as={<Ionicons name="log-out-outline" />} size={6} color="white" />
-        </TouchableOpacity>
+        <View style={{ marginLeft: 'auto' }}>
+          <TouchableOpacity
+            style={{
+              backgroundColor: '#FFBF00',
+              borderRadius: 12,
+              height: 50, // adjust this value according to your requirement
+              width: 50, // adjust this value according to your requirement
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            onPress={exitRoom}>
+            <Icon as={<Ionicons name="log-out-outline" />} size={6} color="white" />
+          </TouchableOpacity>
+        </View>
         <HStack />
       </HStack>
     </>

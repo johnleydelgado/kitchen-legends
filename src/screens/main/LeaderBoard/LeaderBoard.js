@@ -36,6 +36,22 @@ const LeaderBoard = () => {
     // setRowsPerPage(rowsPerPage + 1);
   };
 
+  const determineRank = (score) => {
+    let rank;
+    if (score >= 80 && score <= 100) {
+      rank = 'Legend';
+    } else if (score >= 51 && score < 80) {
+      rank = 'Epic';
+    } else if (score >= 31 && score < 50) {
+      rank = 'Grand Master';
+    } else if (score >= 11 && score < 30) {
+      rank = 'Master';
+    } else {
+      rank = 'Elite';
+    }
+    return rank;
+  };
+
   useEffect(() => {
     if (isFocused) {
       const rooms = localRealm.objects(Room.name);
@@ -44,19 +60,32 @@ const LeaderBoard = () => {
       rooms
         .map((obj) => obj.records)
         .map((records) => {
-          console.log('records', records);
           if (records.length > 0) {
             records.map((obj) => {
               const roomFilterByRecordId = rooms.filtered(
                 'records._id == $0',
                 mongoose.Types.ObjectId(obj._id)
               );
+
               const roomName = roomFilterByRecordId[0].name;
-              leaderBoardData.push({
-                playerName: obj?.player?.name || '',
-                roomName: roomName || '',
-                score: obj?.score || 0,
-              });
+              // find the index of the player in the leaderboardData array
+              const playerIndex = leaderBoardData.findIndex(
+                (player) => player.playerId === String(obj?.player?._id)
+              );
+
+              // if the player is not in the array, push them into the array
+              if (playerIndex === -1) {
+                leaderBoardData.push({
+                  playerId: String(obj?.player?._id),
+                  playerName: obj?.player?.name || '',
+                  roomName: roomName || '',
+                  score: obj?.score || 0,
+                });
+              }
+              // if the player is already in the array, add the new score to the existing score
+              else {
+                leaderBoardData[playerIndex].score += obj?.score || 0;
+              }
             });
           }
         });
@@ -64,7 +93,7 @@ const LeaderBoard = () => {
       setData(leaderBoardData.sort((a, b) => b.score - a.score));
     }
   }, [isFocused]);
-  console.log('aaa', page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
   return (
     <Box bgColor={colors.primary} style={{ flex: 1, padding: 32 }} safeAreaTop={16}>
       <Text fontSize={32} fontWeight="thin" color="gray.800">
@@ -147,10 +176,15 @@ const LeaderBoard = () => {
                 </VStack>
                 <VStack justifyContent="center">
                   <Text>{obj.playerName}</Text>
-                  <Text>Room: {obj.roomName}</Text>
+                  <Text>{obj.score} pts</Text>
                 </VStack>
               </HStack>
-              <Text>{obj.score} pts</Text>
+              {/* <Text>{obj.score} pts</Text>
+               */}
+              <HStack>
+                <Text>Rank:</Text>
+                <Text color="amber.800"> {determineRank(obj.score)}</Text>
+              </HStack>
             </Box>
           ))}
         </VStack>

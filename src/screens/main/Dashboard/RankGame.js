@@ -269,7 +269,7 @@ const RankGame = () => {
               players={players}
               selectPlayerHandler={selectPlayerHandler}
             />
-            {!hideScanBtn ? (
+            {!hideScanBtn && !question?.category ? (
               <Box position="absolute" bottom="16" left="1" right="1">
                 <TouchableOpacity style={{ alignItems: 'center' }} onPress={scanBtnHandler}>
                   <Icon as={<Ionicons name="scan-outline" />} size={12} color="#ABABAB" />
